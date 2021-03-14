@@ -24,6 +24,79 @@ class Poset{
             }
         }
     }
+    /*
+    * Returns true if all the chains in the given list of chains is non-empty
+    */
+    bool allChainsNonEmpty(myList chains[],int k) 
+    {
+        for(int i=0;i<k;i++)
+        {
+            if(chains[i].size()==0)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    * Returns true if first vector clock is less than second vector clock 
+    */
+    bool less_than(vector<int> clock1, vector<int> clock2)
+    {
+        //clock1 < clock2 if in all positions clock1[i] <= clock2[i] and there is atleast one position in which clock1[i] < clock2[i]
+        for(int i=0;i<n;i++)
+        {
+            if(clock1[i]>clock2[i])
+                return false;
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(clock1[i]<clock2[i])
+                return true;
+        }
+        return false;
+    }
+
+    bool merge(myList chains[],myList anti_chain[],int k)
+    {
+        set<int> ac;//a set of indices indicating those input queues whose heads are known to form an antichain.
+        int bigger[k];
+        while(ac.size()!=k && allChainsNonEmpty(chains,k))
+        {
+            set<int> move; //records which elements will be moved from an input queue to an output queue.
+            for(int i=0;i<k;i++)
+            {
+                if(ac.find(i)==ac.end()) //check if i does not belong to 'ac' and then proceed
+                {
+                    for(int j=0;j<k;j++)
+                    {
+                        if(less_than(chains[i][0],chains[j][0]))
+                        {
+                            move.insert(i);
+                            bigger[i]=j;
+                        }
+                        if(less_than(chains[j][0],chains[i][0]))
+                        {
+                            move.insert(j);
+                            bigger[j]=i;
+                        }
+                    }
+                }
+            }
+            for (auto it = move.begin(); it != move.end(); ++it)
+            {
+                //dest = findQ()
+            }
+            for(int i=0;i<k;i++) //  ac = all - move
+            {
+                if(move.find(i)==move.end())
+                {
+                    ac.insert(i);
+                }
+            }
+        }
+        if(allChainsNonEmpty(chains,k))
+            return false; 
+    }
     void findAntiChain(int k)
     {
         
