@@ -1,21 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef vector< vector<int> > myList;
-void findAntiChain(int k,myList chains[])
-{
-    cout<<"HELLO"<<endl;
-}
+
+class Poset{
+    int n;
+    myList* chains;
+    public:
+    Poset(int n , myList chains[]){
+        this->n = n;
+        this->chains = new myList[n];
+        for(int i=0;i<n;i++){
+            this->chains[i] = chains[i];
+        }
+    }
+    void printInput(){
+        for(int i=0;i<n;i++){
+            auto ch = chains[i];
+            for(auto ch2 : ch){
+                for(auto el: ch2){
+                    cout<<el<<" ";
+                }
+                cout<<endl;
+            }
+        }
+    }
+    void findAntiChain(int k)
+    {
+        
+    }    
+};
+
+
 int main()
 {
-    int n,m; //n is number of processes and m is number of chains/queues 
-    cin>>n>>m;
-    int size_queue[m];
-    for(int i=0;i<m;i++)
+    int n; //n is number of processes 
+    cin>>n;
+    int size_queue[n+1];
+    for(int i=0;i<n;i++)
     {
-        cin>>size_queue[i];
+        cin>>size_queue[i];        
     }
-    myList chains[m];
-    for(int i=0;i<m;i++)
+    myList chains[n];
+    for(int i=0;i<n;i++)
     {
         for(int j=0;j<size_queue[i];j++)
         {
@@ -29,7 +55,9 @@ int main()
             chains[i].push_back(vector_clock);
         }
     }
-    int k;      // find if there exists an antichain of size k
-    cin>>k;
-    findAntiChain(k,chains);
+    Poset p(n,chains);
+    p.printInput();
+
+    //   int k;      // find if there exists an antichain of size k
+    // cin>>k;
 }
