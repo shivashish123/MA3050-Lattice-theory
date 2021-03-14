@@ -1,18 +1,96 @@
 #include <bits/stdc++.h>
+#define pb push_back
+#define pii pair<int,int>
+#define ff first
+#define ss second
 using namespace std;
 typedef vector< vector<int> > myList;
+class Helper{
+    public:
+    static int getRandomNumber(int a, int b) {
+        return a + rand() % (b - a + 1);
+    }
+};
+class Graph{
+    int k;
+    set<pii> *adj;
+    public:
+    Graph(int k){
+        this->k = k;
+        adj = new set<pii>[k+1];
+    }
+    void generateGraph(){
+        for(int i = 1; i < k; ++i) {
+            int u = Helper::getRandomNumber(1, i - 1);
+            int v = i;
+            adj[u].insert({v,i-1});
+            adj[v].insert({u,i-1});
+        }
+    }
+    void dfs(int u,int par,bool visited[],set<pii>adj[]){
+        visited[u] = true;
+        for(auto k:adj[u]){
+            if(k.ff == par ) continue;
+            dfs(k.ff,u,visited,adj);
+        }
+    }
+    int getLabel(int i,int j){
+        bool visited[k+1];
+        memset(visited,false,sizeof(visited));
+        int label;
+        for(auto child:adj[i]){
+            auto childCopy = child;
+            dfs(child.first,i,visited,adj);
+            if(visited[j] == true){
+                adj[i].erase(childCopy);
+                label =  childCopy.second;
+                break;
+            }
+        }
+        adj[i].insert({j,label});
+        return label;
+    }    
+};
+class Chains{
+    vector<pair<int,vector<vector<int>>>> chains;
 
+    public:
+    Chains(vector<pair<int,vector<vector<int>>>> chains){
+        this->chains = chains;
+    }
+    void addChains(vector<vector<int>> ch){
+        chains.pb({0,ch});
+    }
+
+    vector<pair<int,vector<vector<int>>>> getLeastMergetChains(int k){
+        vector<pair<int,vector<vector<int>>>> leastChains;
+        for(int i=0;i<k;i++){
+            leastChains.pb(chains[i]);                        
+        }               
+        return leastChains;
+    }
+    void updateChains(vector<pair<int,vector<vector<int>>>> newChains,int k){
+        chains.erase(chains.begin(),chains.begin()+k);
+        for(auto k:newChains){
+            chains.pb(k);
+        }
+    }
+};
 class Poset{
     int n;
     myList* chains;
+    int totalChains;
     public:
     Poset(int n , myList chains[]){
         this->n = n;
+        this->totalChains = n;
         this->chains = new myList[n];
         for(int i=0;i<n;i++){
             this->chains[i] = chains[i];
         }
     }
+    
+    
     void printInput(){
         for(int i=0;i<n;i++){
             auto ch = chains[i];
@@ -60,6 +138,7 @@ class Poset{
     {
         set<int> ac;//a set of indices indicating those input queues whose heads are known to form an antichain.
         int bigger[k];
+        Graph graph(k);
         while(ac.size()!=k && allChainsNonEmpty(chains,k))
         {
             set<int> move; //records which elements will be moved from an input queue to an output queue.
@@ -85,6 +164,8 @@ class Poset{
             for (auto it = move.begin(); it != move.end(); ++it)
             {
                 //dest = findQ()
+                // pass i , j to getLabel
+                int dest = graph.getLabel(); 
             }
             for(int i=0;i<k;i++) //  ac = all - move
             {
@@ -97,15 +178,18 @@ class Poset{
         if(allChainsNonEmpty(chains,k))
             return false; 
     }
-    void findAntiChain(int k)
+    bool findAntiChain(int k)
     {
-        
-    }    
+        while(totalChains > k-1){
+
+        }
+    }  
+   
 };
 
 
-int main()
-{
+int main(int argc, char* argv[]) {
+    srand(atoi(argv[1]));
     int n; //n is number of processes 
     cin>>n;
     int size_queue[n+1];
