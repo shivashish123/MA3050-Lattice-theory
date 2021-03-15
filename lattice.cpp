@@ -172,7 +172,7 @@ class Poset{
                 //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
-                
+
             }
             for(int i=0;i<k;i++) //  ac = all - move
             {
@@ -188,7 +188,7 @@ class Poset{
     vector<vector<int>>* findAntiChain(int k)
     {
         while(totalChains > k-1){
-            vector<vector<int>>* toMergeChains = new vector<vector<int>>[k];
+            vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
             bool res = merge(toMergeChains,  ,k);
             if(res)
