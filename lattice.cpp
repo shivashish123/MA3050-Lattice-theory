@@ -190,7 +190,7 @@ class Poset{
         while(totalChains > k-1){
             vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
-            bool res = merge(toMergeChains,  ,k);
+            bool res = merge(toMergeChains, mergedChains ,k);
             if(res)
                 pChains.updateChains(mergedChains,k);
             else
