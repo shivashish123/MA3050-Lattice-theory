@@ -55,45 +55,51 @@ class Chains{
     vector<pair<int,vector<vector<int>>>> chains;
 
     public:
+    Chains(){
+
+    }
     Chains(vector<pair<int,vector<vector<int>>>> chains){
         this->chains = chains;
     }
-    void addChains(vector<vector<int>> ch){
-        chains.pb({0,ch});
+    void addChain(vector<vector<int>> ch){
+        chains.pb({ch.size(),ch});
+    }
+    vector<vector<int>> getChain(int index){
+        return chains[index].ss;
     }
 
-    vector<pair<int,vector<vector<int>>>> getLeastMergetChains(int k){
-        vector<pair<int,vector<vector<int>>>> leastChains;
+    vector<vector<int>>* getLeastElementChains(int k){
+        vector<vector<int>>* leastChains = new vector<vector<int>>[k];
         for(int i=0;i<k;i++){
-            leastChains.pb(chains[i]);                        
+            leastChains[i] = chains[i].second;                        
         }               
         return leastChains;
     }
-    void updateChains(vector<pair<int,vector<vector<int>>>> newChains,int k){
+    void updateChains(vector<vector<int>>* newChains,int k){
         chains.erase(chains.begin(),chains.begin()+k);
-        for(auto k:newChains){
-            chains.pb(k);
+        for(int i=0;i<k-1;i++){
+            chains.pb({newChains[k].size(),newChains[k]});
         }
+        sort(chains.begin(),chains.end());
     }
 };
 class Poset{
     int n;
-    myList* chains;
+    Chains pChains;
     int totalChains;
     public:
     Poset(int n , myList chains[]){
         this->n = n;
         this->totalChains = n;
-        this->chains = new myList[n];
         for(int i=0;i<n;i++){
-            this->chains[i] = chains[i];
+            this->pChains.addChain(chains[i]);
         }
     }
     
     
     void printInput(){
         for(int i=0;i<n;i++){
-            auto ch = chains[i];
+            auto ch = pChains.getChain(i);
             for(auto ch2 : ch){
                 for(auto el: ch2){
                     cout<<el<<" ";
@@ -165,7 +171,8 @@ class Poset{
             {
                 //dest = findQ()
                 // pass i , j to getLabel
-                int dest = graph.getLabel(); 
+                int dest = graph.getLabel(*it,bigger[*it]);
+                
             }
             for(int i=0;i<k;i++) //  ac = all - move
             {
@@ -178,11 +185,18 @@ class Poset{
         if(allChainsNonEmpty(chains,k))
             return false; 
     }
-    bool findAntiChain(int k)
+    vector<vector<int>>* findAntiChain(int k)
     {
         while(totalChains > k-1){
-
+            vector<vector<int>>* toMergeChains = new vector<vector<int>>[k];
+            vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
+            bool res = merge(toMergeChains,  ,k);
+            if(res)
+                pChains.updateChains(mergedChains,k);
+            else
+                return toMergeChains;
         }
+        return NULL;
     }  
    
 };
