@@ -140,7 +140,7 @@ class Poset{
         return false;
     }
 
-    bool merge(myList chains[],myList anti_chain[],int k)
+    bool merge(myList chains[],myList merged_chain[],int k)
     {
         set<int> ac;//a set of indices indicating those input queues whose heads are known to form an antichain.
         int bigger[k];
@@ -172,6 +172,9 @@ class Poset{
                 //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
+                vector<int> head_element = chains[it][0];
+                merged_chain[dest].push_back(head_element);
+                chains[it].erase(chains[it].begin()); 
 
             }
             for(int i=0;i<k;i++) //  ac = all - move
@@ -184,17 +187,27 @@ class Poset{
         }
         if(allChainsNonEmpty(chains,k))
             return false; 
+        return true;
     }
+
     vector<vector<int>>* findAntiChain(int k)
     {
         while(totalChains > k-1){
             vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
-            bool res = merge(toMergeChains, mergedChains ,k);
+
+            bool res = merge(toMergeChains,mergedChains, k);
             if(res)
                 pChains.updateChains(mergedChains,k);
             else
-                return toMergeChains;
+            {     
+                vector<vector<int>>* antichain = new vector<vector<int>>[k];
+                for(int i=0;i<k;i++)
+                {
+                    antichain[i]=toMergeChains[i][0];
+                }
+                return antichain;
+            }
         }
         return NULL;
     }  
