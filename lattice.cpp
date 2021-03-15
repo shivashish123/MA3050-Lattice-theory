@@ -18,16 +18,19 @@ class Graph{
     Graph(int k){
         this->k = k;
         adj = new set<pii>[k+1];
+        generateGraph();
     }
     void generateGraph(){
         for(int i = 1; i < k; ++i) {
-            int u = Helper::getRandomNumber(1, i - 1);
+            int u = Helper::getRandomNumber(0, i - 1);
             int v = i;
             adj[u].insert({v,i-1});
             adj[v].insert({u,i-1});
+            cout<<u<<" "<<v<<endl;
         }
     }
     void dfs(int u,int par,bool visited[],set<pii>adj[]){
+        cout<<u<<endl;
         visited[u] = true;
         for(auto k:adj[u]){
             if(k.ff == par ) continue;
@@ -35,6 +38,7 @@ class Graph{
         }
     }
     int getLabel(int i,int j){
+        cout<<i<<" "<<j<<endl;
         bool visited[k+1];
         memset(visited,false,sizeof(visited));
         int label;
@@ -63,24 +67,29 @@ class Chains{
     }
     void addChain(vector<vector<int>> ch){
         chains.pb({ch.size(),ch});
+        sort(chains.begin(),chains.end());
     }
     vector<vector<int>> getChain(int index){
         return chains[index].ss;
     }
 
     vector<vector<int>>* getLeastElementChains(int k){
-        vector<vector<int>>* leastChains = new vector<vector<int>>[k];
+        vector<vector<int>>* leastChains = new vector<vector<int>>[k];       
         for(int i=0;i<k;i++){
-            leastChains[i] = chains[i].second;                        
-        }               
+            leastChains[i] = chains[i].ss;            
+        }          
         return leastChains;
     }
     void updateChains(vector<vector<int>>* newChains,int k){
         chains.erase(chains.begin(),chains.begin()+k);
         for(int i=0;i<k-1;i++){
-            chains.pb({newChains[k].size(),newChains[k]});
+            chains.pb({newChains[i].size(),newChains[i]});
         }
         sort(chains.begin(),chains.end());
+        cout<<"updated"<<endl;
+    }
+    int getSize(){
+        return chains.size();
     }
 };
 class Poset{
@@ -98,7 +107,7 @@ class Poset{
     
     
     void printInput(){
-        for(int i=0;i<n;i++){
+        for(int i=0;i<pChains.getSize();i++){
             auto ch = pChains.getChain(i);
             for(auto ch2 : ch){
                 for(auto el: ch2){
@@ -145,6 +154,7 @@ class Poset{
         set<int> ac;//a set of indices indicating those input queues whose heads are known to form an antichain.
         int bigger[k];
         Graph graph(k);
+        cout<<"graph done"<<endl;
         while(ac.size()!=k && allChainsNonEmpty(chains,k))
         {
             set<int> move; //records which elements will be moved from an input queue to an output queue.
@@ -167,16 +177,19 @@ class Poset{
                     }
                 }
             }
+            cout<<"for loops done"<<endl;
             for (auto it = move.begin(); it != move.end(); ++it)
             {
                 //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
-                vector<int> head_element = chains[it][0];
+                cout<<dest<<endl;
+                vector<int> head_element = chains[*it][0];
                 merged_chain[dest].push_back(head_element);
-                chains[it].erase(chains[it].begin()); 
+                chains[*it].erase(chains[*it].begin()); 
 
             }
+            cout<<"move done"<<endl;
             for(int i=0;i<k;i++) //  ac = all - move
             {
                 if(move.find(i)==move.end())
@@ -190,26 +203,24 @@ class Poset{
         return true;
     }
 
-    vector<vector<int>>* findAntiChain(int k)
+    pair<int,vector<vector<int>>*> findAntiChain(int k)
     {
-        while(totalChains > k-1){
+        while(pChains.getSize() > k-1){
+            
             vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
+            vector<vector<int>>* antichain = pChains.getLeastElementChains(k);            
 
             bool res = merge(toMergeChains,mergedChains, k);
+            cout<<"merge done"<<" "<<res<<endl;
             if(res)
                 pChains.updateChains(mergedChains,k);
             else
-            {     
-                vector<vector<int>>* antichain = new vector<vector<int>>[k];
-                for(int i=0;i<k;i++)
-                {
-                    antichain[i]=toMergeChains[i][0];
-                }
-                return antichain;
-            }
+            { 
+                return { k, antichain};
+            }         
         }
-        return NULL;
+        return {0,NULL};
     }  
    
 };
@@ -241,7 +252,22 @@ int main(int argc, char* argv[]) {
     }
     Poset p(n,chains);
     p.printInput();
-
+    pair<int,vector<vector<int>>*> res = p.findAntiChain(6);
+    pair<int,vector<vector<int>>*> notFound = {0,NULL};
+    if(res == notFound){
+        cout<<"Not found"<<endl;
+    }
+    else{        
+        for(int i=0;i<res.ff;i++){
+            cout<<"*\n";
+            for(auto it1: res.ss[i]){
+                for(auto it2: it1)
+                    cout<<it2<<" ";
+                cout<<endl;
+            }
+            cout<<"**\n";
+        }
+    }
     //   int k;      // find if there exists an antichain of size k
     // cin>>k;
 }
