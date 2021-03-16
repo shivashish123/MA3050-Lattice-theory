@@ -209,7 +209,8 @@ class Poset{
                 for(int j=0;j<k-1;j++)
                 {
                     int siz2=merged_chain[j].size();
-                    if(less_than(merged_chain[j][siz2-1],chains[i][0]))
+                    cout<<i<<" "<<j<<" "<< siz2<<endl;
+                    if((siz2> 0 && less_than(merged_chain[j][siz2-1],chains[i][0])) || (siz2 == 0))
                     {
                         for(int l=0;l<siz;l++)
                         {
@@ -247,8 +248,8 @@ class Poset{
 };
 
 
-int main(int argc, char* argv[]) {
-    srand(atoi(argv[1]));
+int main() {
+    srand(1);
     int n; //n is number of processes 
     cin>>n;
     int size_queue[n+1];
@@ -273,7 +274,7 @@ int main(int argc, char* argv[]) {
     }
     Poset p(n,chains);
     p.printInput();
-    pair<int,vector<vector<int>>*> res = p.findAntiChain(3);
+    pair<int,vector<vector<int>>*> res = p.findAntiChain(4);
     pair<int,vector<vector<int>>*> notFound = {0,NULL};
     if(res == notFound){
         cout<<"Not found"<<endl;
