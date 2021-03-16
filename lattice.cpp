@@ -5,6 +5,16 @@
 #define ss second
 using namespace std;
 typedef vector< vector<int> > myList;
+ostream& operator<<(ostream& os, const vector<int>& v){
+   os << "[";
+   for (int i = 0; i < v.size(); ++i) {
+      os << v[i];
+      if (i != v.size() - 1)
+         os << ", ";
+   }
+   os << "]\n";
+   return os;
+}
 class Helper{
     public:
     static int getRandomNumber(int a, int b) {
@@ -26,11 +36,9 @@ class Graph{
             int v = i;
             adj[u].insert({v,i-1});
             adj[v].insert({u,i-1});
-            cout<<u<<" "<<v<<endl;
         }
     }
     void dfs(int u,int par,bool visited[],set<pii>adj[]){
-        cout<<u<<endl;
         visited[u] = true;
         for(auto k:adj[u]){
             if(k.ff == par ) continue;
@@ -38,21 +46,33 @@ class Graph{
         }
     }
     int getLabel(int i,int j){
+        cout<<i<<" "<<j<<" label"<<endl;
         bool visited[k+1];
         memset(visited,false,sizeof(visited));
         int label;
         for(auto child:adj[i]){
-            auto childCopy = child;
+            auto childCopy = child;           
             dfs(child.first,i,visited,adj);
             if(visited[j] == true){
                 adj[i].erase(childCopy);
+                adj[childCopy.first].erase({i,childCopy.second});
                 label =  childCopy.second;
                 break;
             }
         }
         adj[i].insert({j,label});
+        adj[j].insert({i,label});
         return label;
-    }    
+    }  
+    void printGraph(){
+        for(int i=0;i<k;i++){
+            cout<<i<<" :: ";
+            for(auto k1:adj[i]){
+                cout<<k1.ff<<" ";
+            }
+            cout<<endl;
+        }
+    }
 };
 class Chains{
     vector<pair<int,vector<vector<int>>>> chains;
@@ -113,6 +133,7 @@ class Poset{
                 for(auto el: ch2){
                     cout<<el<<" ";
                 }
+                cout<<endl;
             }
         }
     }
@@ -156,6 +177,7 @@ class Poset{
         cout<<"graph done"<<endl;
         while(ac.size()!=k && allChainsNonEmpty(chains,k))
         {
+            graph.printGraph();
             set<int> move; //records which elements will be moved from an input queue to an output queue.
             for(int i=0;i<k;i++)
             {
@@ -163,13 +185,16 @@ class Poset{
                 {
                     for(int j=0;j<k;j++)
                     {
+                        
                         if(less_than(chains[i][0],chains[j][0]))
-                        {
+                        {      
                             move.insert(i);
                             bigger[i]=j;
                         }
                         if(less_than(chains[j][0],chains[i][0]))
                         {
+                            cout<<chains[i][0];
+                            cout<<chains[j][0];
                             move.insert(j);
                             bigger[j]=i;
                         }
@@ -182,13 +207,14 @@ class Poset{
                 //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
-                cout<<dest<<" ??"<<endl;
+                cout<<dest<<" ?? "<<*it<<" "<<bigger[*it]<<endl;
                 vector<int> head_element = chains[*it][0];
                 merged_chain[dest].push_back(head_element);
                 chains[*it].erase(chains[*it].begin()); 
 
             }
             cout<<"move done"<<endl;
+            ac.clear();
             for(int i=0;i<k;i++) //  ac = all - move
             {
                 if(move.find(i)==move.end())
@@ -196,6 +222,7 @@ class Poset{
                     ac.insert(i);
                 }
             }
+            cout<<ac.size()<<endl;
         }
         if(allChainsNonEmpty(chains,k))
             return false; 
@@ -209,7 +236,6 @@ class Poset{
                 for(int j=0;j<k-1;j++)
                 {
                     int siz2=merged_chain[j].size();
-                    cout<<i<<" "<<j<<" "<< siz2<<endl;
                     if((siz2> 0 && less_than(merged_chain[j][siz2-1],chains[i][0])) || (siz2 == 0))
                     {
                         for(int l=0;l<siz;l++)
