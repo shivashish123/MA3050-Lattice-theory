@@ -38,7 +38,6 @@ class Graph{
         }
     }
     int getLabel(int i,int j){
-        cout<<i<<" "<<j<<endl;
         bool visited[k+1];
         memset(visited,false,sizeof(visited));
         int label;
@@ -86,7 +85,7 @@ class Chains{
             chains.pb({newChains[i].size(),newChains[i]});
         }
         sort(chains.begin(),chains.end());
-        cout<<"updated"<<endl;
+        cout<<"updated"<<" "<<getSize()<<endl;
     }
     int getSize(){
         return chains.size();
@@ -107,13 +106,13 @@ class Poset{
     
     
     void printInput(){
+        cout<<"Size "<<pChains.getSize()<<endl;
         for(int i=0;i<pChains.getSize();i++){
             auto ch = pChains.getChain(i);
             for(auto ch2 : ch){
                 for(auto el: ch2){
                     cout<<el<<" ";
                 }
-                cout<<endl;
             }
         }
     }
@@ -177,13 +176,13 @@ class Poset{
                     }
                 }
             }
-            cout<<"for loops done"<<endl;
+            cout<<"for loops done "<<move.size()<<endl;
             for (auto it = move.begin(); it != move.end(); ++it)
             {
                 //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
-                cout<<dest<<endl;
+                cout<<dest<<" ??"<<endl;
                 vector<int> head_element = chains[*it][0];
                 merged_chain[dest].push_back(head_element);
                 chains[*it].erase(chains[*it].begin()); 
@@ -218,7 +217,8 @@ class Poset{
             else
             { 
                 return { k, antichain};
-            }         
+            } 
+            this->printInput();
         }
         return {0,NULL};
     }  
@@ -252,7 +252,7 @@ int main(int argc, char* argv[]) {
     }
     Poset p(n,chains);
     p.printInput();
-    pair<int,vector<vector<int>>*> res = p.findAntiChain(6);
+    pair<int,vector<vector<int>>*> res = p.findAntiChain(3);
     pair<int,vector<vector<int>>*> notFound = {0,NULL};
     if(res == notFound){
         cout<<"Not found"<<endl;

@@ -38,7 +38,7 @@ class chains{
         vector<vector<int>> chains;
         vector<int>seed = getSeed();
         chains.pb(seed);
-        int chainSize = rand(1,3);
+        int chainSize = rand(1 ,10);
         for(int i=2;i<=chainSize;i++){
             vector<int>nextChain = getChain(chains.back());
             chains.pb(nextChain);
