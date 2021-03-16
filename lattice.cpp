@@ -200,6 +200,27 @@ class Poset{
         }
         if(allChainsNonEmpty(chains,k))
             return false; 
+
+        //FinishMerge Function
+        for(int i=0;i<k;i++)
+        {
+            int siz = chains[i].size();
+            if(chains[i].size()>0)
+            {
+                for(int j=0;j<k-1;j++)
+                {
+                    int siz2=merged_chain[j].size();
+                    if(less_than(merged_chain[j][siz2-1],chains[i][0]))
+                    {
+                        for(int l=0;l<siz;l++)
+                        {
+                            merged_chain[j].push_back(chains[i][l]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
         return true;
     }
 
