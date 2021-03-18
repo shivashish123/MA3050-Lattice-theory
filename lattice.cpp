@@ -46,7 +46,6 @@ class Graph{
         }
     }
     int getLabel(int i,int j){
-        cout<<i<<" "<<j<<" label"<<endl;
         bool visited[k+1];
         memset(visited,false,sizeof(visited));
         int label;
@@ -105,7 +104,7 @@ class Chains{
             chains.pb({newChains[i].size(),newChains[i]});
         }
         sort(chains.begin(),chains.end());
-        cout<<"updated"<<" "<<getSize()<<endl;
+        //cout<<"updated"<<" "<<getSize()<<endl;
     }
     int getSize(){
         return chains.size();
@@ -256,7 +255,7 @@ class Poset{
             
             vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
-            vector<vector<int>>* antichain = pChains.getLeastElementChains(k);            
+            //vector<vector<int>>* antichain = pChains.getLeastElementChains(k);            
 
             bool res = merge(toMergeChains,mergedChains, k);
             cout<<"merge done"<<" "<<res<<endl;
@@ -264,7 +263,7 @@ class Poset{
                 pChains.updateChains(mergedChains,k);
             else
             { 
-                return { k, antichain};
+                return { k, toMergeChains};
             } 
             this->printInput();
         }
@@ -276,8 +275,8 @@ class Poset{
 
 int main() {
     srand(1);
-    int n; //n is number of processes 
-    cin>>n;
+    int n , k; //n is number of processes 
+    cin>>n >> k;
     int size_queue[n+1];
     for(int i=0;i<n;i++)
     {
@@ -299,23 +298,17 @@ int main() {
         }
     }
     Poset p(n,chains);
-    p.printInput();
-    pair<int,vector<vector<int>>*> res = p.findAntiChain(4);
+    pair<int,vector<vector<int>>*> res = p.findAntiChain(k);
     pair<int,vector<vector<int>>*> notFound = {0,NULL};
     if(res == notFound){
         cout<<"Not found"<<endl;
     }
     else{        
         for(int i=0;i<res.ff;i++){
-            cout<<"*\n";
-            for(auto it1: res.ss[i]){
-                for(auto it2: it1)
+            for(auto it2: res.ss[i][0]){            
                     cout<<it2<<" ";
-                cout<<endl;
             }
-            cout<<"**\n";
+            cout<<"\n";
         }
     }
-    //   int k;      // find if there exists an antichain of size k
-    // cin>>k;
 }

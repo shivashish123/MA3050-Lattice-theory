@@ -38,7 +38,7 @@ class chains{
         vector<vector<int>> chains;
         vector<int>seed = getSeed();
         chains.pb(seed);
-        int chainSize = rand(1 ,10);
+        int chainSize = rand(1 ,5);
         for(int i=2;i<=chainSize;i++){
             vector<int>nextChain = getChain(chains.back());
             chains.pb(nextChain);
@@ -84,8 +84,9 @@ class chains{
 int main(int argc, char* argv[]) {
     srand(atoi(argv[1]));
 	IOS;
-	int n=rand(5,5); // total process
-	cout<<n<<endl;
+	int n=rand(4,4); // total process
+    int k=rand(4,4);
+	cout<<n<<" "<<k<<endl;
     chains chain(n);
     
     vector < vector<vector<int>>> allChains = chain.generateChains();
