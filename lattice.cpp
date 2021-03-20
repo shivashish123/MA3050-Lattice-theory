@@ -125,7 +125,6 @@ class Poset{
     
     
     void printInput(){
-        cout<<"Size "<<pChains.getSize()<<endl;
         for(int i=0;i<pChains.getSize();i++){
             auto ch = pChains.getChain(i);
             for(auto ch2 : ch){
@@ -134,6 +133,7 @@ class Poset{
                 }
                 cout<<endl;
             }
+            cout<<"??"<<endl;
         }
     }
     /*
@@ -173,10 +173,10 @@ class Poset{
         set<int> ac;//a set of indices indicating those input queues whose heads are known to form an antichain.
         int bigger[k];
         Graph graph(k);
-        cout<<"graph done"<<endl;
+        //cout<<"graph done"<<endl;
         while(ac.size()!=k && allChainsNonEmpty(chains,k))
         {
-            graph.printGraph();
+            //graph.printGraph();
             set<int> move; //records which elements will be moved from an input queue to an output queue.
             for(int i=0;i<k;i++)
             {
@@ -192,27 +192,24 @@ class Poset{
                         }
                         if(less_than(chains[j][0],chains[i][0]))
                         {
-                            cout<<chains[i][0];
-                            cout<<chains[j][0];
                             move.insert(j);
                             bigger[j]=i;
                         }
                     }
                 }
             }
-            cout<<"for loops done "<<move.size()<<endl;
+            //cout<<"for loops done "<<move.size()<<endl;
             for (auto it = move.begin(); it != move.end(); ++it)
             {
-                //dest = findQ()
                 // pass i , j to getLabel
                 int dest = graph.getLabel(*it,bigger[*it]);
-                cout<<dest<<" ?? "<<*it<<" "<<bigger[*it]<<endl;
+                //cout<<dest<<" "<<*it<<" "<<bigger[*it]<<endl;
                 vector<int> head_element = chains[*it][0];
                 merged_chain[dest].push_back(head_element);
                 chains[*it].erase(chains[*it].begin()); 
 
             }
-            cout<<"move done"<<endl;
+            //cout<<"move done"<<endl;
             ac.clear();
             for(int i=0;i<k;i++) //  ac = all - move
             {
@@ -221,10 +218,9 @@ class Poset{
                     ac.insert(i);
                 }
             }
-            cout<<ac.size()<<endl;
+            //cout<<ac.size()<<endl;
         }
-        if(allChainsNonEmpty(chains,k))
-            return false; 
+       
 
         //FinishMerge Function
         for(int i=0;i<k;i++)
@@ -246,6 +242,9 @@ class Poset{
                 }
             }
         }
+        if(allChainsNonEmpty(chains,k))
+            return false; 
+            
         return true;
     }
 
@@ -255,7 +254,6 @@ class Poset{
             
             vector<vector<int>>* toMergeChains = pChains.getLeastElementChains(k);
             vector<vector<int>>* mergedChains = new vector<vector<int>>[k-1];
-            //vector<vector<int>>* antichain = pChains.getLeastElementChains(k);            
 
             bool res = merge(toMergeChains,mergedChains, k);
             cout<<"merge done"<<" "<<res<<endl;
@@ -263,7 +261,12 @@ class Poset{
                 pChains.updateChains(mergedChains,k);
             else
             { 
-                return { k, toMergeChains};
+                vector<vector<int>>* antichain = new vector<vector<int>>[k];
+                for(int i=0;i<k;i++)
+                {
+                    antichain[i].pb(toMergeChains[i][0]);
+                }               
+                return { k,antichain};            
             } 
             this->printInput();
         }
@@ -301,14 +304,14 @@ int main() {
     pair<int,vector<vector<int>>*> res = p.findAntiChain(k);
     pair<int,vector<vector<int>>*> notFound = {0,NULL};
     if(res == notFound){
-        cout<<"Not found"<<endl;
+        cout<<"Antichain of size "<<k<<" not found"<<endl;
     }
     else{        
+        cout<<"Found an Antichain of size "<<k<<endl;
         for(int i=0;i<res.ff;i++){
-            for(auto it2: res.ss[i][0]){            
-                    cout<<it2<<" ";
+            for(auto it2: res.ss[i]){            
+                    cout<<it2;
             }
-            cout<<"\n";
         }
     }
 }
